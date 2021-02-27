@@ -1,0 +1,284 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>newtonraphson_example</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-09-26"><meta name="DC.source" content="newtonraphson_example.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">newton raphson example</a></li><li><a href="#2">References:</a></li><li><a href="#3">inputs:</a></li><li><a href="#4">governing equations</a></li><li><a href="#5">solve</a></li><li><a href="#6">results</a></li><li><a href="#7">comparison</a></li><li><a href="#8">LSQ Curve Fitting</a></li></ul></div><h2>newton raphson example<a name="1"></a></h2><p>Find the Darcy friction factor for pipe flow using the Colebrook equation.</p><pre class="codeinput">fprintf(<span class="string">'\n**************************************************\n'</span>)
+fprintf(<span class="string">'NON-LINEAR SYSTEM OF EQUATIONS - PIPE FLOW EXAMPLE\n'</span>)
+fprintf(<span class="string">'**************************************************\n'</span>)
+</pre><pre class="codeoutput">
+**************************************************
+NON-LINEAR SYSTEM OF EQUATIONS - PIPE FLOW EXAMPLE
+**************************************************
+</pre><h2>References:<a name="2"></a></h2><div><ul><li><a href="http://en.wikipedia.org/wiki/Darcy_friction_factor_formulae">http://en.wikipedia.org/wiki/Darcy_friction_factor_formulae</a></li><li><a href="http://en.wikipedia.org/wiki/Darcy%E2%80%93Weisbach_equation">http://en.wikipedia.org/wiki/Darcy%E2%80%93Weisbach_equation</a></li><li><a href="http://en.wikipedia.org/wiki/Moody_chart">http://en.wikipedia.org/wiki/Moody_chart</a></li><li><a href="http://www.mathworks.com/matlabcentral/fileexchange/35710-iapwsif97-functional-form-with-no-slip">http://www.mathworks.com/matlabcentral/fileexchange/35710-iapwsif97-functional-form-with-no-slip</a></li></ul></div><h2>inputs:<a name="3"></a></h2><pre class="codeinput">p = 0.68; <span class="comment">% [MPa] water pressure (100 psi)</span>
+dp = -0.068*1e6; <span class="comment">% [Pa] pipe pressure drop (10 psi)</span>
+T = 323; <span class="comment">% [K] water temperature</span>
+D = 0.10; <span class="comment">% [m] pipe hydraulic diameter</span>
+L = 100; <span class="comment">% [m] pipe length</span>
+roughness = 0.00015; <span class="comment">% [m] cast iron pipe roughness</span>
+rho = 1./IAPWS_IF97(<span class="string">'v_pT'</span>,p,T); <span class="comment">% [kg/m^3] water density (988.1 kg/m^3)</span>
+mu = IAPWS_IF97(<span class="string">'mu_pT'</span>,p,T); <span class="comment">% [Pa*s] water viscosity (5.4790e-04 Pa*s)</span>
+Re = @(u) rho*u*D/mu; <span class="comment">% Reynolds number</span>
+</pre><h2>governing equations<a name="4"></a></h2><p>Use Colebrook and Darcy-Weisbach equation to solve for pipe flow.</p><pre class="codeinput"><span class="comment">% friction factor (Colebrook eqn.)</span>
+residual_friction = @(u, f) 1/sqrt(f) + 2*log10(roughness/3.7/D + 2.51/Re(u)/sqrt(f));
+<span class="comment">% pressure drop (Darcy-Weisbach eqn.)</span>
+residual_pressdrop = @(u, f) rho*u^2*f*L/2/D + dp;
+<span class="comment">% residuals</span>
+fun = @(x) [residual_friction(x(1),x(2)), residual_pressdrop(x(1),x(2))];
+</pre><h2>solve<a name="5"></a></h2><pre class="codeinput">x0 = [1,0.01]; <span class="comment">% initial guess</span>
+fprintf(<span class="string">'\ninitial guess: u = %g[m/s], f = %g\n'</span>,x0) <span class="comment">% display initial guess</span>
+options = optimset(<span class="string">'TolX'</span>,1e-12); <span class="comment">% set TolX</span>
+[x, resnorm, f, exitflag, output, jacob] = newtonraphson(fun, x0, options);
+fprintf(<span class="string">'\nexitflag: %d, %s\n'</span>,exitflag, output.message) <span class="comment">% display output message</span>
+</pre><pre class="codeoutput">
+initial guess: u = 1[m/s], f = 0.01
+
+     Niter    resnorm   stepnorm     lambda      rcond  convergence
+-------------------------------------------------------------------
+         0  6.306e+04          0          1  2.023e-05          Inf
+         1  5.454e+04      6.174        0.1  4.686e-06       0.1451
+         2  4.258e+04      2.802     0.1776  1.994e-06       0.2476
+         3   2.82e+04      1.189          1  4.201e-07       0.4122
+         4       2732     0.8279          1  9.078e-07        2.334
+         5      23.65    0.01323          1  8.798e-07         4.75
+         6    0.03425   0.001349          1  8.809e-07        6.537
+         7  2.852e-09  1.207e-07          1  8.809e-07         16.3
+
+exitflag: 1, Normal exit.
+</pre><h2>results<a name="6"></a></h2><pre class="codeinput">fprintf(<span class="string">'\nOutputs:\n'</span>)
+properties = {<span class="string">'Pressure'</span>,<span class="string">'Pressure-drop'</span>,<span class="string">'Temperature'</span>,<span class="string">'Diameter'</span>,<span class="string">'Length'</span>, <span class="keyword">...</span>
+    <span class="string">'roughness'</span>,<span class="string">'density'</span>,<span class="string">'viscosity'</span>,<span class="string">'Reynolds-number'</span>,<span class="string">'speed'</span>,<span class="string">'friction'</span>};
+units = {<span class="string">'[Pa]'</span>,<span class="string">'[Pa]'</span>,<span class="string">'[C]'</span>,<span class="string">'[cm]'</span>,<span class="string">'[m]'</span>,<span class="string">'[mm]'</span>,<span class="string">'[kg/m^3]'</span>,<span class="string">'[Pa*s]'</span>,<span class="string">'[]'</span>,<span class="string">'[m/s]'</span>,<span class="string">'[]'</span>};
+values = {p*1e6,dp,T-273.15,D*100,L,roughness*1000,rho,mu,Re(x(1)),x(1),x(2)};
+fprintf(<span class="string">'%15s %10s %10s\n'</span>,<span class="string">'Property'</span>,<span class="string">'Unit'</span>,<span class="string">'Value'</span>)
+results = [properties; units; values];
+fprintf(<span class="string">'%15s %10s %10.4g\n'</span>,results{:})
+</pre><pre class="codeoutput">
+Outputs:
+       Property       Unit      Value
+       Pressure       [Pa]    6.8e+05
+  Pressure-drop       [Pa]   -6.8e+04
+    Temperature        [C]      49.85
+       Diameter       [cm]         10
+         Length        [m]        100
+      roughness       [mm]       0.15
+        density   [kg/m^3]      988.4
+      viscosity     [Pa*s]   0.000548
+Reynolds-number         []  4.487e+05
+          speed      [m/s]      2.488
+       friction         []    0.02223
+</pre><h2>comparison<a name="7"></a></h2><p>solve using Haaland</p><pre class="codeinput">Ntest = 10;
+u0 = linspace(x(1)*0.1, x(1)*10, Ntest); <span class="comment">% [m/s]</span>
+Re0 = Re(u0);
+f0 = (1./(-1.8*log10((roughness/D/3.7)^1.11 + 6.9./Re0))).^2;
+u0 = sqrt(-dp/rho./(f0*L/2/D));
+<span class="comment">% plot</span>
+plot(u0, f0, <span class="string">'-'</span>, u0, x(2)*ones(1,Ntest), <span class="string">'--'</span>, x(1)*ones(1,Ntest), f0, <span class="string">'--'</span>)
+grid
+title(<span class="string">'Pipe flow solution using Haaland equation.'</span>)
+xlabel(<span class="string">'water speed, u [m/s]'</span>),ylabel(<span class="string">'friction factor, f'</span>)
+legend(<span class="string">'f_{Haaland}'</span>,[<span class="string">'f = '</span>,num2str(x(2))], [<span class="string">'u = '</span>,num2str(x(1)),<span class="string">' [m/s]'</span>])
+</pre><img vspace="5" hspace="5" src="newtonraphson_example_01.png" alt=""> <h2>LSQ Curve Fitting<a name="8"></a></h2><pre class="codeinput">fprintf(<span class="string">'\n**********************************************\n'</span>)
+fprintf(<span class="string">'LEAST SQUARES CURVE FITTING WITH NEWTONRAPHSON\n'</span>)
+fprintf(<span class="string">'**********************************************\n'</span>)
+<span class="comment">% independent variables</span>
+[x,y] = meshgrid(0:10,0:10);
+<span class="comment">% bivariate distribution</span>
+bivar = @(x1,x2,sig,u1,u2)1/2/pi/sig^2*exp(-1/2*(((x1-u1).^2+(x2-u2).^2)/sig));
+sigma = 3; ux = 4; uy = 5; <span class="comment">% std dev, x &amp; y means</span>
+z = bivar(x,y,sigma,ux,uy); <span class="comment">% dist</span>
+<span class="comment">% plot</span>
+figure,contour(x,y,z),hold(<span class="string">'all'</span>)
+title(<span class="string">'lsq curve-fitting bivariate pdf with newtonraphson'</span>)
+xlabel(<span class="string">'x-coord'</span>),ylabel(<span class="string">'y-coord'</span>) <span class="comment">% axes titles</span>
+grid,colorbar <span class="comment">% show colorbar and grid</span>
+z_meas = z + (2*rand(11)-1)/1e4; <span class="comment">% measured data</span>
+<span class="comment">% fitting function</span>
+lsqfitfun = @(c)z_meas-bivar(x,y,c(1),c(2),c(3));
+<span class="comment">% fit coefficients to fun</span>
+c0 = [1,2,3]; <span class="comment">% initial guess</span>
+fprintf(<span class="string">'\ninitial guess: sigma = %g, ux = %g, uy = %g\n'</span>,c0) <span class="comment">% display initial guess</span>
+options = optimset(<span class="string">'TolX'</span>,1e-12); <span class="comment">% set TolX</span>
+[c, ~, ~, exitflag, output] = newtonraphson(lsqfitfun, c0, options);
+fprintf(<span class="string">'\nexitflag: %d, %s\n'</span>,exitflag, output.message) <span class="comment">% display output message</span>
+fprintf(<span class="string">'\ncurve-fit coefficients: sigma=%g, ux=%g, uy=%g\n'</span>,c)
+lines = plot(repmat(c(2),1,11),0:10,<span class="string">'--'</span>,0:10,repmat(c(3),1,11),<span class="string">'--'</span>, <span class="keyword">...</span>
+    c(2),c(3),<span class="string">'o'</span>);
+set(lines,<span class="string">'LineWidth'</span>,2);
+legend(<span class="string">'bivariate distribution'</span>,<span class="string">'u_x'</span>,<span class="string">'u_y'</span>,<span class="string">'center'</span>)
+</pre><pre class="codeoutput">
+**********************************************
+LEAST SQUARES CURVE FITTING WITH NEWTONRAPHSON
+**********************************************
+
+initial guess: sigma = 1, ux = 2, uy = 3
+
+     Niter    resnorm   stepnorm     lambda      rcond  convergence
+-------------------------------------------------------------------
+         0     0.2697          0          1     0.6663          Inf
+         1     0.1298     0.5807          1     0.5942       0.7315
+         2    0.06264     0.8891          1     0.4813       0.7285
+         3     0.0306      1.321          1     0.4064       0.7166
+         4    0.01194      1.654          1     0.3987       0.9409
+         5   0.003244     0.6143          1     0.4381        1.303
+         6  0.0006406     0.1036          1     0.4308        1.622
+         7  0.0006271   0.004762          1     0.4305      0.02127
+         8  0.0006271  1.153e-05          1     0.4305    9.278e-08
+         9  0.0006271  1.815e-08          1     0.4305    2.074e-13
+
+exitflag: 2, May have converged, but X is to close to XOLD.
+
+curve-fit coefficients: sigma=2.998, ux=4.00425, uy=5.00273
+</pre><img vspace="5" hspace="5" src="newtonraphson_example_02.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% newton raphson example
+% Find the Darcy friction factor for pipe flow using the Colebrook
+% equation.
+fprintf('\n**************************************************\n')
+fprintf('NON-LINEAR SYSTEM OF EQUATIONS - PIPE FLOW EXAMPLE\n')
+fprintf('**************************************************\n')
+%% References:
+% * http://en.wikipedia.org/wiki/Darcy_friction_factor_formulae
+% * http://en.wikipedia.org/wiki/Darcy%E2%80%93Weisbach_equation
+% * http://en.wikipedia.org/wiki/Moody_chart
+% * http://www.mathworks.com/matlabcentral/fileexchange/35710-iapwsif97-functional-form-with-no-slip
+%% inputs:
+p = 0.68; % [MPa] water pressure (100 psi)
+dp = -0.068*1e6; % [Pa] pipe pressure drop (10 psi)
+T = 323; % [K] water temperature
+D = 0.10; % [m] pipe hydraulic diameter
+L = 100; % [m] pipe length
+roughness = 0.00015; % [m] cast iron pipe roughness
+rho = 1./IAPWS_IF97('v_pT',p,T); % [kg/m^3] water density (988.1 kg/m^3)
+mu = IAPWS_IF97('mu_pT',p,T); % [Pa*s] water viscosity (5.4790e-04 Pa*s)
+Re = @(u) rho*u*D/mu; % Reynolds number
+%% governing equations
+% Use Colebrook and Darcy-Weisbach equation to solve for pipe flow.
+
+% friction factor (Colebrook eqn.)
+residual_friction = @(u, f) 1/sqrt(f) + 2*log10(roughness/3.7/D + 2.51/Re(u)/sqrt(f));
+% pressure drop (Darcy-Weisbach eqn.)
+residual_pressdrop = @(u, f) rho*u^2*f*L/2/D + dp;
+% residuals
+fun = @(x) [residual_friction(x(1),x(2)), residual_pressdrop(x(1),x(2))];
+%% solve
+x0 = [1,0.01]; % initial guess
+fprintf('\ninitial guess: u = %g[m/s], f = %g\n',x0) % display initial guess 
+options = optimset('TolX',1e-12); % set TolX
+[x, resnorm, f, exitflag, output, jacob] = newtonraphson(fun, x0, options);
+fprintf('\nexitflag: %d, %s\n',exitflag, output.message) % display output message
+%% results
+fprintf('\nOutputs:\n')
+properties = {'Pressure','Pressure-drop','Temperature','Diameter','Length', ...
+    'roughness','density','viscosity','Reynolds-number','speed','friction'};
+units = {'[Pa]','[Pa]','[C]','[cm]','[m]','[mm]','[kg/m^3]','[Pa*s]','[]','[m/s]','[]'};
+values = {p*1e6,dp,T-273.15,D*100,L,roughness*1000,rho,mu,Re(x(1)),x(1),x(2)};
+fprintf('%15s %10s %10s\n','Property','Unit','Value')
+results = [properties; units; values];
+fprintf('%15s %10s %10.4g\n',results{:})
+%% comparison
+% solve using Haaland
+Ntest = 10;
+u0 = linspace(x(1)*0.1, x(1)*10, Ntest); % [m/s]
+Re0 = Re(u0);
+f0 = (1./(-1.8*log10((roughness/D/3.7)^1.11 + 6.9./Re0))).^2;
+u0 = sqrt(-dp/rho./(f0*L/2/D));
+% plot
+plot(u0, f0, '-', u0, x(2)*ones(1,Ntest), 'REPLACE_WITH_DASH_DASH', x(1)*ones(1,Ntest), f0, 'REPLACE_WITH_DASH_DASH')
+grid
+title('Pipe flow solution using Haaland equation.')
+xlabel('water speed, u [m/s]'),ylabel('friction factor, f')
+legend('f_{Haaland}',['f = ',num2str(x(2))], ['u = ',num2str(x(1)),' [m/s]'])
+%% LSQ Curve Fitting
+fprintf('\n**********************************************\n')
+fprintf('LEAST SQUARES CURVE FITTING WITH NEWTONRAPHSON\n')
+fprintf('**********************************************\n')
+% independent variables
+[x,y] = meshgrid(0:10,0:10);
+% bivariate distribution
+bivar = @(x1,x2,sig,u1,u2)1/2/pi/sig^2*exp(-1/2*(((x1-u1).^2+(x2-u2).^2)/sig));
+sigma = 3; ux = 4; uy = 5; % std dev, x & y means
+z = bivar(x,y,sigma,ux,uy); % dist
+% plot
+figure,contour(x,y,z),hold('all')
+title('lsq curve-fitting bivariate pdf with newtonraphson')
+xlabel('x-coord'),ylabel('y-coord') % axes titles
+grid,colorbar % show colorbar and grid
+z_meas = z + (2*rand(11)-1)/1e4; % measured data
+% fitting function
+lsqfitfun = @(c)z_meas-bivar(x,y,c(1),c(2),c(3));
+% fit coefficients to fun
+c0 = [1,2,3]; % initial guess
+fprintf('\ninitial guess: sigma = %g, ux = %g, uy = %g\n',c0) % display initial guess 
+options = optimset('TolX',1e-12); % set TolX
+[c, ~, ~, exitflag, output] = newtonraphson(lsqfitfun, c0, options);
+fprintf('\nexitflag: %d, %s\n',exitflag, output.message) % display output message
+fprintf('\ncurve-fit coefficients: sigma=%g, ux=%g, uy=%g\n',c)
+lines = plot(repmat(c(2),1,11),0:10,'REPLACE_WITH_DASH_DASH',0:10,repmat(c(3),1,11),'REPLACE_WITH_DASH_DASH', ...
+    c(2),c(3),'o');
+set(lines,'LineWidth',2);
+legend('bivariate distribution','u_x','u_y','center')
+##### SOURCE END #####
+--></body></html>

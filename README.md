@@ -10,7 +10,7 @@ In preparation of the codes, the following (modified) packages have been borrowe
 - NewtonRaphson_0.5 (https://github.com/mikofski/NewtonRaphson)
 - regu (http://www2.compute.dtu.dk/~pcha/Regutools/)
 - CVX package (http://cvxr.com/cvx/)
--assignmentoptimal (https://www.mathworks.com/matlabcentral/fileexchange/6543-functions-for-the-rectangular-assignment-problem)
+- assignmentoptimal (https://www.mathworks.com/matlabcentral/fileexchange/6543-functions-for-the-rectangular-assignment-problem)
 
 Except the CVX package, which should be installed on your computer, all other packages/codes are already provided in the project’s folders for your convenience.
 

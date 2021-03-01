@@ -1,5 +1,5 @@
 # RMVB -- Read Me
-
+------------------------------------------------------------------------------------------------------------------------------------------
   This readme document describes software codes which have been developed under support from the National Institutes of Health via grants EB021027, NS096761, MH114233, AT009263 (to Prof. Bin He) and NSF CAREER CCF-1651825 (to Prof. Mehmet Akçakaya). 
 The source codes are provided as a service to the scientific community and may be used for any non-commercial purposes.  Users should use the codes or data at their own risks with no guarantees provided, as is. If anyone should use the codes provided here in its entirety or partially, we ask them to cite the following publication in any of their publications or presentations:
 “S. A. Hossein Hosseini, A. Sohrabpour, M. Akçakaya and B. He, "Electromagnetic Brain Source Imaging by Means of a Robust Minimum Variance Beamformer," in IEEE Transactions on Biomedical Engineering, vol. 65, no. 10, pp. 2365-2374, Oct. 2018, doi: 10.1109/TBME.2018.2859204.”
